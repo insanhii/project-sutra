@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Sutra - Turiya Intelligence</title>
+    <!-- Importing the Physics Graph Library -->
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #0f172a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden;}
+        #header { padding: 20px 30px; background: #1e293b; border-bottom: 2px solid #3b82f6; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);}
+        h1 { margin: 0; font-size: 22px; letter-spacing: 1.5px; color: #60a5fa; text-transform: uppercase;}
+        .badge { background: #047857; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; letter-spacing: 1px;}
+        #mynetwork { width: 100vw; height: calc(100vh - 75px); }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>Project Sutra: Knowledge Graph</h1>
+        <span class="badge">SYSTEM ONLINE | SEC: 65B VERIFIED</span>
+    </div>
+    
+    <div id="mynetwork"></div>
+
+    <script>
+        async function loadGraph() {
+            try {
+                // Fetch live data from your Java Spring Boot Backend
+                const response = await fetch('http://localhost:8080/api/network');
+                const data = await response.json();
+
+                // Apply styling based on Node types
+                data.nodes.forEach(node => {
+                    node.font = { color: 'white', size: 14, face: 'Tahoma' };
+                    node.shadow = true;
+                    
+                    if (node.group === 'Person') { 
+                        node.color = { background: '#ef4444', border: '#b91c1c' }; 
+                        node.shape = 'dot'; 
+                        node.size = 25;
+                    }
+                    if (node.group === 'BankAccount') { 
+                        node.color = { background: '#3b82f6', border: '#1d4ed8' }; 
+                        node.shape = 'box'; 
+                    }
+                    if (node.group === 'Phone') { 
+                        node.color = { background: '#10b981', border: '#047857' }; 
+                        node.shape = 'ellipse'; 
+                    }
+                });
+
+                // Style the connecting edges
+                data.edges.forEach(edge => {
+                    edge.font = { color: '#94a3b8', size: 11, align: 'middle' };
+                    edge.color = { color: '#64748b', highlight: '#93c5fd' };
+                    edge.arrows = 'to';
+                    edge.smooth = { type: 'continuous' };
+                });
+
+                // Render the physics engine
+                const container = document.getElementById('mynetwork');
+                const options = {
+                    physics: { 
+                        barnesHut: { gravitationalConstant: -4000, centralGravity: 0.3 },
+                        stabilization: { iterations: 150 }
+                    },
+                    interaction: { hover: true, tooltipDelay: 200 }
+                };
+                new vis.Network(container, data, options);
+
+            } catch (error) {
+                console.error('Error fetching graph data:', error);
+                alert("Cannot connect to Java Backend. Ensure Spring Boot is running on port 8080.");
+            }
+        }
+        window.onload = loadGraph;
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+frontend/dist/
+sutra-backend/target/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Package locks (optional, you may want to keep these)
+frontend/package-lock.json
+
+# Maven wrapper jar
+sutra-backend/.mvn/
